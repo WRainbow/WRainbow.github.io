@@ -268,7 +268,7 @@
     
       <div class="tag-cloud">
         <div class="tag-cloud-title">
-            目前共计 2 个标签
+            目前共计 1 个标签
         </div>
         <div class="tag-cloud-tags">
           <a href="/tags/system/" style="font-size: 12px; color: #ccc">system</a>
@@ -284,6 +284,8 @@
 
           
   <div class="comments" id="comments">
+    
+      <div id="cloud-tie-wrapper" class="cloud-tie-wrapper"></div>
     
   </div>
 
@@ -335,7 +337,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">1</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -500,18 +502,21 @@
 
 
   
-
-
-
-
-
+    
+    <script>
+      var cloudTieConfig = {
+        url: document.location.href, 
+        sourceId: "",
+        productKey: "94ef77a72b2e41f896a8b3f9715a19f4",
+        target: "cloud-tie-wrapper"
+      };
+    </script>
+    <script src="https://img1.ws.126.net/f2e/tie/yun/sdk/loader.js"></script>
   
 
 
 
 
-
-  
 
 
 
