@@ -333,138 +333,14 @@
 
       
         
-          
-            <h1 id="RecyclerView-设置点击事件"><a href="#RecyclerView-设置点击事件" class="headerlink" title="RecyclerView 设置点击事件"></a>RecyclerView 设置点击事件</h1><p><strong>其实这才是我想说的</strong><br>　　今年的Google I/O大会过了一个多月了，本来准备在那两天开始写我的博客，但是由于毕设和<br>公司实习以及一些问题一直拖了下来。但！这都不是理由，关键还是执行力不够，希望写博客可以让<br>我慢慢的静下来，能够有说做就做的魄力。作为一个人一定不能懒，但作为一个程序员，不会偷懒可<br>就是人生一大憾事了。成为一名lazyCoder是我的追求，虽然人很lazy，但coder我是专业的。。。</p>
-<p><strong>回到 “正题”</strong><br>　　RecyclerView是Android V7包下的控件,使用时需要引入包 ，出现时间可谓是非常之长了。要知道，两年多的时间<br>都可以让一门新生语言步入正轨了。刚开始学习Android时使用的都是ListView，不得不说，它的定<br>制性不好，尤其在使用了RecyclerView后，我就没有用了ListView了。<br>　　你可以使用RecyclerView更方便的实现……</p>
-<h2 id="RecyclerView中控件的点击事件设置简述"><a href="#RecyclerView中控件的点击事件设置简述" class="headerlink" title="RecyclerView中控件的点击事件设置简述"></a>RecyclerView中控件的点击事件设置简述</h2><p>　　一般来说，Android中View的点击事件用的最多的是点击事件<code>OnClickListener</code>及长按事件<br><code>OnLongClickListener</code>，这里主要记录下这两种事件在RecyclerView中的设置，其他事件的处理<br>都是类似的，使用RecyclerView进行点击事件的处理主要还是点击后可能会涉及到控件及数据的处理，<br>但是直接在Adapter中又没法实现，毕竟我们都要是在Context下进行点击事件的处理。其实只说<br><code>OnClicklistener</code>也是一样的，那就只说<code>OnClickListener</code>的吧……</p>
-<p><strong>Here is the key</strong><br>　　在RecyclerView的适配器Adapter中为每个View设置需要的监听事件如<code>OnClickListener</code>，<br>然后使用在处理这些监听事件的方法体中使用接口将事件传递给需要处理的地方进行处理，所需要的<br>参数都通过这个接口传递出去。</p>
-<h2 id="RecyclerView的适配器Adapter的实现"><a href="#RecyclerView的适配器Adapter的实现" class="headerlink" title="RecyclerView的适配器Adapter的实现"></a>RecyclerView的适配器Adapter的实现</h2><h3 id="1-接口的实现"><a href="#1-接口的实现" class="headerlink" title="1. 接口的实现"></a>1. 接口的实现</h3><p>　　新建一个接口将adapter中的点击事件传递到外部。如果想要获取到点击Item中TextView的值，<br>就可以按照下面这样做。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OnItemWithParamsClickListener</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onItemWithParamsClick</span><span class="params">(View v, String value)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>上面的参数v就是点击的Item中的控件，就是你希望获取到点击事件的控件；参数value就是想要传递<br>到外部的值。adapter中这部分代码如下（这里贴出全部代码，之后只写主要代码）：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyAdapter</span> <span class="keyword">extends</span> <span class="title">RecyclerView</span>.<span class="title">Adapter</span>&lt;<span class="title">MyAdapter</span>.<span class="title">MyHolder</span>&gt; <span class="keyword">implements</span> <span class="title">View</span>.<span class="title">OnClickListener</span></span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> Context mContext;</div><div class="line">    <span class="keyword">private</span> OnItemWithParamsClickListener onItemWithParamsClickListener;</div><div class="line">    <span class="keyword">private</span> List&lt;String&gt; mMusicList;</div><div class="line"></div><div class="line">    <span class="comment">//构造函数，在这里初始化Adapter</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyAdapter</span><span class="params">(Context context, List&lt;String&gt; list)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.mContext = context;</div><div class="line">        <span class="keyword">this</span>.mMusicList = list;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> MyHolder <span class="title">onCreateViewHolder</span><span class="params">(ViewGroup parent, <span class="keyword">int</span> viewType)</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="comment">//布局文件rv_show_music中只包含一个id为rv_music_name_tv的TextView</span></div><div class="line">        View view = LayoutInflater.from(mContext).inflate(R.layout.rv_show_music, parent, <span class="keyword">false</span>);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> MyHolder(view);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//这里详细设置Item中的每个控件</span></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBindViewHolder</span><span class="params">(MyHolder holder, <span class="keyword">int</span> position)</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="comment">//为Item中的控件设置值</span></div><div class="line">        holder.mTvMusicName.setText(mMusicList.get(position));</div><div class="line"></div><div class="line">        <span class="comment">//为Item设置tag，这里就是设置自己需要传出的参数</span></div><div class="line">        holder.mTvMusicName.setTag(mMusicList.get(position));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getItemCount</span><span class="params">()</span> </span>&#123;</div><div class="line">       <span class="keyword">return</span> mMusicList == <span class="keyword">null</span> ? <span class="number">0</span> : mMusicList.size();</div><div class="line">   &#125;</div><div class="line"></div><div class="line">   <span class="comment">//这里为adapter设置接口回调，在希望处理监听事件的地方调用</span></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOnItemWithParamsClickListener</span><span class="params">(OnItemWithParamsClickListener listener)</span> </span>&#123;</div><div class="line">       <span class="keyword">this</span>.onItemWithParamsClickListener = listener;</div><div class="line">   &#125;</div><div class="line"></div><div class="line">   <span class="meta">@Override</span></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</div><div class="line">       <span class="keyword">if</span> (onItemWithParamsClickListener != <span class="keyword">null</span>) &#123;</div><div class="line">           <span class="keyword">switch</span> (v.getId()) &#123;</div><div class="line">               <span class="keyword">case</span> R.id.rv_music_name_tv:</div><div class="line">                   <span class="comment">//在处理点击事件的地方实现onItemWithParamsClick方法获取参数</span></div><div class="line">                   onItemWithParamsClickListener.onItemWithParamsClick(v, (String)v.getTag());</div><div class="line">                   <span class="keyword">break</span>;</div><div class="line">           &#125;</div><div class="line">       &#125;</div><div class="line">   &#125;</div><div class="line"></div><div class="line">   <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyHolder</span> <span class="keyword">extends</span> <span class="title">RecyclerView</span>.<span class="title">ViewHolder</span> </span>&#123;</div><div class="line"></div><div class="line">       <span class="comment">//定义布局中的控件</span></div><div class="line">       <span class="meta">@Bind</span>(R.id.rv_music_name_tv)</div><div class="line">       TextView mTvMusicName;</div><div class="line"></div><div class="line">       MyHolder(View itemView) &#123;</div><div class="line">           <span class="keyword">super</span>(itemView);</div><div class="line"></div><div class="line">           <span class="comment">//这里使用了三方框架ButterKnife进行控件绑定</span></div><div class="line">           ButterKnife.bind(<span class="keyword">this</span>, itemView);</div><div class="line">       &#125;</div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>上述代码包含了一个<code>setOnItemWithParamsClickListener(···)</code>方法，这个方法就是在需要处理点击事件的地方调用，<br>然后实现<code>OnItemWithParamsClickListener</code>接口。所需的参数就由Adapter中的<code>onClick(View v)</code>方法传出。<br><strong>说明：</strong></p>
-<ol>
-<li>在<code>onBindViewHolder()</code>方法中使用<code>setTag()</code>来为控件设置附加参数以便在其他地方获取，但往往需要传递数据可能<br>不知一个，也可能有多种类型。这个问题在下面接着讲述。</li>
-<li>如果类中需要设置监听事件的View较多，可以在让类实现<code>OnClickListener</code>接口，然后在<code>onClick(View v)</code>方法中<br>根据v的id来处理不同View的点击事件。这样可以让整个类更简洁，代码修改起来更加方便。</li>
-<li>在MyHolder中使用了三方框架ButterKnife，这样可以省略很多单一重复的findViewById代码。</li>
-</ol>
-<h3 id="2-setTag-与setTag-int-key-Object-tag-方法"><a href="#2-setTag-与setTag-int-key-Object-tag-方法" class="headerlink" title="2. setTag()与setTag(int key, Object tag)方法"></a>2. <code>setTag()</code>与<code>setTag(int key, Object tag)</code>方法</h3><p>　　<code>setTag()</code>方法可以为控件设置tag，并提供<code>getTag()</code>方法实现，但是只能设置一个参数，如果一个参数就可以满足需要时<br>可以使用这个方法方便的进行参数的设置与获取；<br>　　Android4.0以后提供了更加方便的<code>setTag(int key, Object tag)</code>的方法来设置参数。当我们需要传递多个参数或者需要<br>通过点击一个View来改变令一个View的状态时就可以使用这种方法可以为View设置多个tag，扩展性更高。需要注意的是这里的<br>key必须是为具体应用的资源id，<br>一般在string.xml文件中定义如下：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&lt;resources&gt;</div><div class="line">    ...</div><div class="line">    &lt;item name="dataTagId" type="id"/&gt;</div><div class="line">    &lt;item name="dataTagString" type="id"/&gt;</div><div class="line">&lt;/resources&gt;</div></pre></td></tr></table></figure></p>
-<p>使用如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">holder.mTvMusicName.setTag(R.id.dataTagString, mMusicList.get(position));</div></pre></td></tr></table></figure></p>
-<h3 id="3-接口的实现与事件处理"><a href="#3-接口的实现与事件处理" class="headerlink" title="3. 接口的实现与事件处理"></a>3. 接口的实现与事件处理</h3><p>　　在类后实现OnItemWithParamsClickListener接口并实现接口内部方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onItemWithParamsClick</span><span class="params">(View v, String value)</span> </span>&#123;</div><div class="line">    <span class="keyword">switch</span> (v.getId()) &#123;</div><div class="line">        <span class="keyword">case</span> R.id.rv_music_name_tv:</div><div class="line">            <span class="comment">//获取传回的参数并进行处理</span></div><div class="line">            ···</div><div class="line">            Log.e(<span class="string">"BlogTest"</span>, value);</div><div class="line">            <span class="keyword">break</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>　　以上就基本上已经可以完成RecyclerView中Item的控件点击事件，类似于长按事件可是在接口中定义出实现方法<br>然后在adapter中设置接口并在View的<code>OnLongClickListener()</code>方法使用接口传参。但是由于有时涉及场景较<br>多时就需要设计多个接口，这样会导致类中接口设计过多，使用混乱，这时候就可以最大限度地复用接口，我使用<br>的方法是使用java中的可变参数列表来实现（关于java可变参数列表的使用可以另外查询下），接口设计如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OnItemWithParamsClickListener</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">//View的OnClicklistener接口方法</span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onItemWithParamsClick</span><span class="params">(View v, Object...objects)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">//View的OnLongClickListener接口方法</span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onItemWithParamsLongClick</span><span class="params">(View v, Object...objects)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>　　通过以上接口能够让多个adapter使用同一个接口，简化了工程结构；但是在使用可变参数列表时需要自己定义<br>传参数的顺序及类型，防止参数过多时存取造成的混乱。  </p>
-<p><em>文章写的比较粗糙，慢慢改进</em><br>　　整个文章分了两次写，所以可能没有衔接上，有问题欢迎留言……</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://singlerainbow.com/2017/06/14/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="SRaibnow">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/mydog.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="SRainbow的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/06/14/hello-world/" itemprop="url">文章测试</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-14T00:00:00+08:00">
-                2017-06-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            
-          
+          <h1 id="RecyclerView-设置点击事件"><a href="#RecyclerView-设置点击事件" class="headerlink" title="RecyclerView 设置点击事件"></a>RecyclerView 设置点击事件</h1><p>　　使用RecyclerView进行点击事件的处理主要还是点击后可能会涉及到控件及数据的处理，但是直接在Adapter中又没法实现，毕竟我们都要是在Context下进行点击事件的处理
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/06/20/2017.6.3-RecyclerView设置点击事件/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -542,7 +418,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">1</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

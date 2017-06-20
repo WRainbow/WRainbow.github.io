@@ -93,17 +93,17 @@
 
 
 
-<meta name="description" content="RecyclerView 设置点击事件其实这才是我想说的　　今年的Google I/O大会过了一个多月了，本来准备在那两天开始写我的博客，但是由于毕设和公司实习以及一些问题一直拖了下来。但！这都不是理由，关键还是执行力不够，希望写博客可以让我慢慢的静下来，能够有说做就做的魄力。作为一个人一定不能懒，但作为一个程序员，不会偷懒可就是人生一大憾事了。成为一名lazyCoder是我的追求，虽然人很laz">
+<meta name="description" content="RecyclerView 设置点击事件　　使用RecyclerView进行点击事件的处理主要还是点击后可能会涉及到控件及数据的处理，但是直接在Adapter中又没法实现，毕竟我们都要是在Context下进行点击事件的处理">
 <meta name="keywords" content="Android">
 <meta property="og:type" content="article">
 <meta property="og:title" content="RecyclerView的监听事件处理">
 <meta property="og:url" content="http://singlerainbow.com/2017/06/20/2017.6.3-RecyclerView设置点击事件/index.html">
 <meta property="og:site_name" content="SRainbow的博客">
-<meta property="og:description" content="RecyclerView 设置点击事件其实这才是我想说的　　今年的Google I/O大会过了一个多月了，本来准备在那两天开始写我的博客，但是由于毕设和公司实习以及一些问题一直拖了下来。但！这都不是理由，关键还是执行力不够，希望写博客可以让我慢慢的静下来，能够有说做就做的魄力。作为一个人一定不能懒，但作为一个程序员，不会偷懒可就是人生一大憾事了。成为一名lazyCoder是我的追求，虽然人很laz">
-<meta property="og:updated_time" content="2017-06-20T04:06:54.741Z">
+<meta property="og:description" content="RecyclerView 设置点击事件　　使用RecyclerView进行点击事件的处理主要还是点击后可能会涉及到控件及数据的处理，但是直接在Adapter中又没法实现，毕竟我们都要是在Context下进行点击事件的处理">
+<meta property="og:updated_time" content="2017-06-20T04:11:55.053Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="RecyclerView的监听事件处理">
-<meta name="twitter:description" content="RecyclerView 设置点击事件其实这才是我想说的　　今年的Google I/O大会过了一个多月了，本来准备在那两天开始写我的博客，但是由于毕设和公司实习以及一些问题一直拖了下来。但！这都不是理由，关键还是执行力不够，希望写博客可以让我慢慢的静下来，能够有说做就做的魄力。作为一个人一定不能懒，但作为一个程序员，不会偷懒可就是人生一大憾事了。成为一名lazyCoder是我的追求，虽然人很laz">
+<meta name="twitter:description" content="RecyclerView 设置点击事件　　使用RecyclerView进行点击事件的处理主要还是点击后可能会涉及到控件及数据的处理，但是直接在Adapter中又没法实现，毕竟我们都要是在Context下进行点击事件的处理">
 
 
 
@@ -340,8 +340,9 @@
       
 
       
-        <h1 id="RecyclerView-设置点击事件"><a href="#RecyclerView-设置点击事件" class="headerlink" title="RecyclerView 设置点击事件"></a>RecyclerView 设置点击事件</h1><p><strong>其实这才是我想说的</strong><br>　　今年的Google I/O大会过了一个多月了，本来准备在那两天开始写我的博客，但是由于毕设和<br>公司实习以及一些问题一直拖了下来。但！这都不是理由，关键还是执行力不够，希望写博客可以让<br>我慢慢的静下来，能够有说做就做的魄力。作为一个人一定不能懒，但作为一个程序员，不会偷懒可<br>就是人生一大憾事了。成为一名lazyCoder是我的追求，虽然人很lazy，但coder我是专业的。。。</p>
-<p><strong>回到 “正题”</strong><br>　　RecyclerView是Android V7包下的控件,使用时需要引入包 ，出现时间可谓是非常之长了。要知道，两年多的时间<br>都可以让一门新生语言步入正轨了。刚开始学习Android时使用的都是ListView，不得不说，它的定<br>制性不好，尤其在使用了RecyclerView后，我就没有用了ListView了。<br>　　你可以使用RecyclerView更方便的实现……</p>
+        <h1 id="RecyclerView-设置点击事件"><a href="#RecyclerView-设置点击事件" class="headerlink" title="RecyclerView 设置点击事件"></a>RecyclerView 设置点击事件</h1><p>　　使用RecyclerView进行点击事件的处理主要还是点击后可能会涉及到控件及数据的处理，但是直接在Adapter中又没法实现，毕竟我们都要是在Context下进行点击事件的处理<a id="more"></a>  </p>
+<p><strong>其实这才是我想说的</strong><br>　　今年的Google I/O大会过了一个多月了，本来准备在那两天开始写我的博客，但是由于毕设和<br>公司实习以及一些问题一直拖了下来。但！这都不是理由，关键还是执行力不够，希望写博客可以让<br>我慢慢的静下来，能够有说做就做的魄力。作为一个人一定不能懒，但作为一个程序员，不会偷懒可<br>就是人生一大憾事了。成为一名lazyCoder是我的追求，虽然人很lazy，但coder我是专业的。。。</p>
+<p><strong>回到 “正题”</strong><br>　　RecyclerView是Android V7包下的控件,使用时需要引入包 ，出现时间可谓是非常之长了。要知道，两年多的时间<br>都可以让一门新生语言步入正轨了。刚开始学习Android时使用的都是ListView，不得不说，它的定制性不好，尤其在使用了RecyclerView后，我就没有用了ListView了。<br>　你可以使用RecyclerView更方便的实现……</p>
 <h2 id="RecyclerView中控件的点击事件设置简述"><a href="#RecyclerView中控件的点击事件设置简述" class="headerlink" title="RecyclerView中控件的点击事件设置简述"></a>RecyclerView中控件的点击事件设置简述</h2><p>　　一般来说，Android中View的点击事件用的最多的是点击事件<code>OnClickListener</code>及长按事件<br><code>OnLongClickListener</code>，这里主要记录下这两种事件在RecyclerView中的设置，其他事件的处理<br>都是类似的，使用RecyclerView进行点击事件的处理主要还是点击后可能会涉及到控件及数据的处理，<br>但是直接在Adapter中又没法实现，毕竟我们都要是在Context下进行点击事件的处理。其实只说<br><code>OnClicklistener</code>也是一样的，那就只说<code>OnClickListener</code>的吧……</p>
 <p><strong>Here is the key</strong><br>　　在RecyclerView的适配器Adapter中为每个View设置需要的监听事件如<code>OnClickListener</code>，<br>然后使用在处理这些监听事件的方法体中使用接口将事件传递给需要处理的地方进行处理，所需要的<br>参数都通过这个接口传递出去。</p>
 <h2 id="RecyclerView的适配器Adapter的实现"><a href="#RecyclerView的适配器Adapter的实现" class="headerlink" title="RecyclerView的适配器Adapter的实现"></a>RecyclerView的适配器Adapter的实现</h2><h3 id="1-接口的实现"><a href="#1-接口的实现" class="headerlink" title="1. 接口的实现"></a>1. 接口的实现</h3><p>　　新建一个接口将adapter中的点击事件传递到外部。如果想要获取到点击Item中TextView的值，<br>就可以按照下面这样做。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OnItemWithParamsClickListener</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">onItemWithParamsClick</span><span class="params">(View v, String value)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
@@ -396,22 +397,6 @@
       
       
 
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2017/06/14/hello-world/" rel="next" title="文章测试">
-                <i class="fa fa-chevron-left"></i> 文章测试
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-          </div>
-        </div>
       
 
       
@@ -482,7 +467,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">1</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
