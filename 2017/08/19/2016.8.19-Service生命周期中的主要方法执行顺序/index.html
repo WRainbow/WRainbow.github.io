@@ -100,7 +100,7 @@
 <meta property="og:url" content="http://singlerainbow.com/2017/08/19/2016.8.19-Service生命周期中的主要方法执行顺序/index.html">
 <meta property="og:site_name" content="SRainbow的博客">
 <meta property="og:description" content="Service的生命周期　　和Activity与Fragment类似，Service也有着自己的生命周期，在整个生命周期中涉及到的方法主要有onCreate()、onStartCommand()、onBind()、onUnBind()、onDestroy()等。当在一个地方启动了Service，Service运行起来，各阶段的方法也将‘顺序’执行起来。">
-<meta property="og:updated_time" content="2017-08-24T10:35:12.075Z">
+<meta property="og:updated_time" content="2017-08-24T10:47:56.251Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Service生命周期及方法">
 <meta name="twitter:description" content="Service的生命周期　　和Activity与Fragment类似，Service也有着自己的生命周期，在整个生命周期中涉及到的方法主要有onCreate()、onStartCommand()、onBind()、onUnBind()、onDestroy()等。当在一个地方启动了Service，Service运行起来，各阶段的方法也将‘顺序’执行起来。">
@@ -340,22 +340,22 @@
       
 
       
-        <h1 id="Service的生命周期"><a href="#Service的生命周期" class="headerlink" title="Service的生命周期"></a>Service的生命周期</h1><p>　　和Activity与Fragment类似，Service也有着自己的生命周期，在整个生命周期中涉及到的方<br>法主要有<code>onCreate()</code>、<code>onStartCommand()</code>、<code>onBind()</code>、<code>onUnBind()</code>、<code>onDestroy()</code><br>等。当在一个地方启动了Service，Service运行起来，各阶段的方法也将‘顺序’执行起来。</p>
+        <h1 id="Service的生命周期"><a href="#Service的生命周期" class="headerlink" title="Service的生命周期"></a>Service的生命周期</h1><p>　　和Activity与Fragment类似，Service也有着自己的生命周期，在整个生命周期中涉及到的方法主要有<code>onCreate()</code>、<code>onStartCommand()</code>、<code>onBind()</code>、<code>onUnBind()</code>、<code>onDestroy()</code>等。当在一个地方启动了Service，Service运行起来，各阶段的方法也将‘顺序’执行起来。</p>
 <a id="more"></a>
-<p><strong>其实这才是我想要说的</strong><br>　　毕业找工作是一件非常重要的事情，不能因为自己的懒就随便找一份做着，想着：以后再换嘛，<br>反正做这行换工作是很正常的事情。作为有血的教训我，找工作真的不能懒，毕业后的第一份工作可<br>以说是人生的另一个起点，马虎不得……<br><strong>回到正题</strong><br>　　Service作为Android的四大组件之一，为开发者提供了一种实现程序后台运行的解决方案。用<br>来执行长期运行的任务且不需要在前台与用户进行交互；甚至在需求下我们可以让Service在程序退<br>出后仍然保持运行状态。Service使我们必须掌握的一点，比如在设计音乐播放器的时候对于Service<br>的使用就很重要了。</p>
-<h1 id="Service的启动方式"><a href="#Service的启动方式" class="headerlink" title="Service的启动方式"></a>Service的启动方式</h1><p>　　Service有两种启动的方式，一种是调用<code>startService()</code>方法，一种是调用<code>bindService()</code><br>方法。这两种方法都可以启动一个服务进程，不同的地方在于Service的生命周期执行方法不同。</p>
-<h2 id="startService-方式启动Service"><a href="#startService-方式启动Service" class="headerlink" title="startService()方式启动Service"></a><code>startService()</code>方式启动Service</h2><p>　　当调用者使用<code>startService()</code>方法启动了Service时，如果服务之前没有创建，那么就会先<br>执行<code>onCreate()</code>方法，然后回调<code>onStartCommand()</code>方法；如果之前创建过服务，那么无论调<br>用多少次<code>startService()</code>方法都只会执行<code>onStartCommand()</code>，而不会再执行<code>onCreate()</code><br>方法，因为每个服务只会存在一个实例。即：<code>onCreate()</code>方法只会在服务初次创建的时候调用，<br>而<code>onStartCommand()</code>方法会在每次启动服务时都执行。<br>　　当服务需要结束时，只需调用<code>stopService()</code>方法即可，此时Service会执行<code>onDestroy()</code><br>方法，然后服务就会被销毁。</p>
-<h2 id="bindService-方式启动Service"><a href="#bindService-方式启动Service" class="headerlink" title="bindService()方式启动Service"></a><code>bindService()</code>方式启动Service</h2><p>　　当调用者使用<code>bindService()</code>方法启动Service时，和第一种方式类似，如果服务之前没有被<br>创建，那么服务就会先执行<code>onCreate()</code>方法，然后回调<code>onBind()</code>方法返回；如果之前创建过服<br>务，那么就只会执行<code>onBind()</code>方法。<br>　　当调用者准备结束服务时，只需调用<code>unbindService()</code>即可，此时Service会先执行<code>onUnBind()</code><br>方法，然后执行<code>onDestroy()</code>方法结束进程。</p>
-<h1 id="重复执行startService-与bindService"><a href="#重复执行startService-与bindService" class="headerlink" title="重复执行startService()与bindService()"></a>重复执行<code>startService()</code>与<code>bindService()</code></h1><p>　　以上，整个服务的生命周期也算是走了个遍，但是总是有人会不走寻常路，我就是要把所有方法<br>都调用一遍……那么就来看如果启动服务时<code>startService()</code>与<code>bindService()</code>一起调用，结束时<br>再都调用结束的方法会怎样。</p>
-<h2 id="先调用startService-再调用bindService"><a href="#先调用startService-再调用bindService" class="headerlink" title="先调用startService()再调用bindService()"></a>先调用<code>startService()</code>再调用<code>bindService()</code></h2><p>　　启动服务时也比较容易想到方法的执行顺序，因为Service只会拥有一个实例，因此<code>onCreate()</code><br>方法肯定只执行了一次，先调用的<code>startService()</code>，因此<code>onStartCommand()</code>先执行。所以启<br>动时顺序是：<code>onCreate()</code> – <code>onStartCommand()</code> – <code>onBind()</code><br>　　结束服务的执行顺序就比较值得研究一番了……</p>
+<p><strong>其实这才是我想要说的</strong><br>　　毕业找工作是一件非常重要的事情，不能因为自己的懒就随便找一份做着，想着：以后再换嘛，反正做这行换工作是很正常的事情。作为有血的教训我，找工作真的不能懒，毕业后的第一份工作可以说是人生的另一个起点，马虎不得……<br><strong>回到正题</strong><br>　　Service作为Android的四大组件之一，为开发者提供了一种实现程序后台运行的解决方案。用来执行长期运行的任务且不需要在前台与用户进行交互；甚至在需求下我们可以让Service在程序退出后仍然保持运行状态。Service使我们必须掌握的一点，比如在设计音乐播放器的时候对于Service的使用就很重要了。</p>
+<h1 id="Service的启动方式"><a href="#Service的启动方式" class="headerlink" title="Service的启动方式"></a>Service的启动方式</h1><p>　　Service有两种启动的方式，一种是调用<code>startService()</code>方法，一种是调用<code>bindService()</code>方法。这两种方法都可以启动一个服务进程，不同的地方在于Service的生命周期执行方法不同。</p>
+<h2 id="startService-方式启动Service"><a href="#startService-方式启动Service" class="headerlink" title="startService()方式启动Service"></a><code>startService()</code>方式启动Service</h2><p>　　当调用者使用<code>startService()</code>方法启动了Service时，如果服务之前没有创建，那么就会先执行<code>onCreate()</code>方法，然后回调<code>onStartCommand()</code>方法；如果之前创建过服务，那么无论调用多少次<code>startService()</code>方法都只会执行<code>onStartCommand()</code>，而不会再执行<code>onCreate()</code>方法，因为每个服务只会存在一个实例。即：<code>onCreate()</code>方法只会在服务初次创建的时候调用，而<code>onStartCommand()</code>方法会在每次启动服务时都执行。<br>　　当服务需要结束时，只需调用<code>stopService()</code>方法即可，此时Service会执行<code>onDestroy()</code>方法，然后服务就会被销毁。</p>
+<h2 id="bindService-方式启动Service"><a href="#bindService-方式启动Service" class="headerlink" title="bindService()方式启动Service"></a><code>bindService()</code>方式启动Service</h2><p>　　当调用者使用<code>bindService()</code>方法启动Service时，和第一种方式类似，如果服务之前没有被创建，那么服务就会先执行<code>onCreate()</code>方法，然后回调<code>onBind()</code>方法返回；如果之前创建过服务，那么就只会执行<code>onBind()</code>方法。<br>　　当调用者准备结束服务时，只需调用<code>unbindService()</code>即可，此时Service会先执行<code>onUnBind()</code>方法，然后执行<code>onDestroy()</code>方法结束进程。</p>
+<h1 id="重复执行startService-与bindService"><a href="#重复执行startService-与bindService" class="headerlink" title="重复执行startService()与bindService()"></a>重复执行<code>startService()</code>与<code>bindService()</code></h1><p>　　以上，整个服务的生命周期也算是走了个遍，但是总是有人会不走寻常路，我就是要把所有方法都调用一遍……那么就来看如果启动服务时<code>startService()</code>与<code>bindService()</code>一起调用，结束时再都调用结束的方法会怎样。</p>
+<h2 id="先调用startService-再调用bindService"><a href="#先调用startService-再调用bindService" class="headerlink" title="先调用startService()再调用bindService()"></a>先调用<code>startService()</code>再调用<code>bindService()</code></h2><p>　　启动服务时也比较容易想到方法的执行顺序，因为Service只会拥有一个实例，因此<code>onCreate()</code>方法肯定只执行了一次，先调用的<code>startService()</code>，因此<code>onStartCommand()</code>先执行。所以启动时顺序是：<code>onCreate()</code> – <code>onStartCommand()</code> – <code>onBind()</code><br>　　结束服务的执行顺序就比较值得研究一番了……</p>
 <ol>
-<li>先调用<code>stopService()</code><br>　　按照正常的来说，因为最开始是调用了<code>startService()</code>方法启动的服务，因此调用<code>stopService</code><br>服务应该就停止了，结果当然不是这么简单。这个不寻常的结果是由于我们之前做的路不寻常导致的。<br>由于我们在调用<code>startService()</code>后紧接着调用了<code>bindService()</code>，因此只有再调用<code>unbindService()</code><br>方法，服务才会结束，而且会先执行<code>onUnBind()</code>再执行<code>onDestroy()</code>方法结束服务。</li>
-<li>先调用<code>unbindService()</code><br>　　有了第一个结果，后面的结果就很容易想了。此时Service会执行<code>onUnBind()</code>方法，但不会<br>跟着执行<code>onDestroy()</code>，只有调用了<code>stopService()</code>服务才会执行<code>onDestroy()</code>方法结束服务。</li>
+<li>先调用<code>stopService()</code><br>　　按照正常的来说，因为最开始是调用了<code>startService()</code>方法启动的服务，因此调用<code>stopService</code>服务应该就停止了，结果当然不是这么简单。这个不寻常的结果是由于我们之前做的路不寻常导致的。由于我们在调用<code>startService()</code>后紧接着调用了<code>bindService()</code>，因此只有再调用<code>unbindService()</code>方法，服务才会结束，而且会先执行<code>onUnBind()</code>再执行<code>onDestroy()</code>方法结束服务。</li>
+<li>先调用<code>unbindService()</code><br>　　有了第一个结果，后面的结果就很容易想了。此时Service会执行<code>onUnBind()</code>方法，但不会跟着执行<code>onDestroy()</code>，只有调用了<code>stopService()</code>服务才会执行<code>onDestroy()</code>方法结束服务。</li>
 </ol>
 <h2 id="先调用bindService-再调用startService"><a href="#先调用bindService-再调用startService" class="headerlink" title="先调用bindService()再调用startService()"></a>先调用<code>bindService()</code>再调用<code>startService()</code></h2><p>　　启动服务的方法执行顺序比较简单，和上面类似：<code>onCreate()</code> – <code>onBind()</code> – <code>onStartCommand()</code></p>
 <ol>
-<li>先调用<code>stopService()</code><br>　　和上面的第一点相同，由于我们调用了<code>bindService()</code>方法，因此服务不会结束。只有当调用<br><code>unbindService()</code>方法时Service才会执行<code>onUnBind()</code>再执行<code>onDestroy()</code>结束服务进程。</li>
-<li>先调用<code>unbindService()</code><br>　　和上面第二点完全相同，Service会先执行<code>onUnBind()</code>但不会结束服务，当调用了<code>stopService()</code><br>时Service才会执行<code>onDestroy()</code>方法结束服务。</li>
+<li>先调用<code>stopService()</code><br>　　和上面的第一点相同，由于我们调用了<code>bindService()</code>方法，因此服务不会结束。只有当调用<code>unbindService()</code>方法时Service才会执行<code>onUnBind()</code>再执行<code>onDestroy()</code>结束服务进程。</li>
+<li>先调用<code>unbindService()</code><br>　　和上面第二点完全相同，Service会先执行<code>onUnBind()</code>但不会结束服务，当调用了<code>stopService()</code>时Service才会执行<code>onDestroy()</code>方法结束服务。</li>
 </ol>
 <p><strong>Here is the key</strong><br>正常的生命周期如下：（调用方法Service会执行相应的方法）</p>
 <ol>
@@ -363,7 +363,7 @@
 <li><code>stopService()</code> : <code>onDestroy()</code></li>
 <li><code>bindService()</code> : <code>onCreate()</code> – <code>onBind()</code> (只有第一次调用会执行<code>onCreate()</code>)</li>
 <li><code>unBindService()</code>: <code>onUnBind()</code> – <code>onDestroy()</code></li>
-<li>同时调用了<code>startService()</code>与<code>bindService()</code>，只有当两种结束服务的方法都被调用过后<br>服务才会停止（<code>stopService()</code>和<code>unbindService()</code>）。</li>
+<li>同时调用了<code>startService()</code>与<code>bindService()</code>，只有当两种结束服务的方法都被调用过后服务才会停止（<code>stopService()</code>和<code>unbindService()</code>）。</li>
 </ol>
 
       
