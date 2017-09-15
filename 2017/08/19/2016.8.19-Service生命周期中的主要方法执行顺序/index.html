@@ -100,7 +100,7 @@
 <meta property="og:url" content="http://singlerainbow.com/2017/08/19/2016.8.19-Service生命周期中的主要方法执行顺序/index.html">
 <meta property="og:site_name" content="SRainbow的博客">
 <meta property="og:description" content="Service的生命周期　　和Activity与Fragment类似，Service也有着自己的生命周期，在整个生命周期中涉及到的方法主要有onCreate()、onStartCommand()、onBind()、onUnBind()、onDestroy()等。当在一个地方启动了Service，Service运行起来，各阶段的方法也将‘顺序’执行起来。">
-<meta property="og:updated_time" content="2017-09-15T13:56:04.228Z">
+<meta property="og:updated_time" content="2017-09-15T13:57:25.870Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Service生命周期及方法">
 <meta name="twitter:description" content="Service的生命周期　　和Activity与Fragment类似，Service也有着自己的生命周期，在整个生命周期中涉及到的方法主要有onCreate()、onStartCommand()、onBind()、onUnBind()、onDestroy()等。当在一个地方启动了Service，Service运行起来，各阶段的方法也将‘顺序’执行起来。">
@@ -363,7 +363,7 @@
 <li><code>stopService()</code> : <code>onDestroy()</code></li>
 <li><code>bindService()</code> : <code>onCreate()</code> – <code>onBind()</code> (只有第一次调用会执行<code>onCreate()</code>)</li>
 <li><code>unBindService()</code>: <code>onUnBind()</code> – <code>onDestroy()</code></li>
-<li>同时调用了<code>startService()</code>与<code>bindService()</code>，只有当两种结束服务的方法都被调用过后<br>服务才会停止（<code>stopService()</code>和<code>unbindService()</code>）。</li>
+<li>同时调用了<code>startService()</code>与<code>bindService()</code>，只有当两种结束服务的方法都被调用过后服务才会停止（<code>stopService()</code>和<code>unbindService()</code>）。</li>
 </ol>
 
       
