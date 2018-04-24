@@ -1,0 +1,745 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,注解," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="说明简单来说，注解就是Java中的一种标记。自从Java 5后引进了注解，只要用到Java的地方就有注解的出现，就像@Override和@Deprecated。看到了@Override就知道这个方法是重写了父类的方法，@Deprecated就表示这个方法已经过时，不建议再使用。但是，如果不添加这些注解，其实代码也是能够正常运行。那这些注解的作用是什么呢？又是怎么起作用的呢？">
+<meta name="keywords" content="Java,注解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java注解及其自定义">
+<meta property="og:url" content="http://singlerainbow.com/2018/04/23/2018.04.23_01/index.html">
+<meta property="og:site_name" content="SRainbow的博客">
+<meta property="og:description" content="说明简单来说，注解就是Java中的一种标记。自从Java 5后引进了注解，只要用到Java的地方就有注解的出现，就像@Override和@Deprecated。看到了@Override就知道这个方法是重写了父类的方法，@Deprecated就表示这个方法已经过时，不建议再使用。但是，如果不添加这些注解，其实代码也是能够正常运行。那这些注解的作用是什么呢？又是怎么起作用的呢？">
+<meta property="og:updated_time" content="2018-04-24T14:12:26.343Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java注解及其自定义">
+<meta name="twitter:description" content="说明简单来说，注解就是Java中的一种标记。自从Java 5后引进了注解，只要用到Java的地方就有注解的出现，就像@Override和@Deprecated。看到了@Override就知道这个方法是重写了父类的方法，@Deprecated就表示这个方法已经过时，不建议再使用。但是，如果不添加这些注解，其实代码也是能够正常运行。那这些注解的作用是什么呢？又是怎么起作用的呢？">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"hide","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://singlerainbow.com/2018/04/23/2018.04.23_01/"/>
+
+
+
+
+
+  <title>Java注解及其自定义 | SRainbow的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?53f3acf593d1df40cb299aa41b4a0fa1";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">SRainbow的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">记录下学习过程</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://singlerainbow.com/2018/04/23/2018.04.23_01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="SRaibnow">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/mydog.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="SRainbow的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java注解及其自定义</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-23T00:00:00+08:00">
+                2018-04-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>简单来说，注解就是Java中的一种标记。自从Java 5后引进了注解，只要用到Java的地方就有注解的出现，就像<code>@Override</code>和<code>@Deprecated</code>。看到了<code>@Override</code>就知道这个方法是重写了父类的方法，<code>@Deprecated</code>就表示这个方法已经过时，不建议再使用。但是，如果不添加这些注解，其实代码也是能够正常运行。那这些注解的作用是什么呢？又是怎么起作用的呢？<a id="more"></a></p>
+<h3 id="注解的主要作用"><a href="#注解的主要作用" class="headerlink" title="注解的主要作用"></a>注解的主要作用</h3><ol>
+<li>编写文档</li>
+<li>标记，用于告诉编译器一些信息</li>
+<li>编译时动态处理，如动态生成辅助代码</li>
+<li>运行时动态处理，如得到注解信息、处理代码逻辑</li>
+</ol>
+<p>注解可以用在很多地方：包、类、方法、变量…甚至注解也是可以添加到注解上的，这些能够添加到注解上的注解就是<strong>元注解</strong>，元注解定义了一个注解能够处理的类型和生存时间等信息，元注解就是用来辅助注解的定义的。Java中默认的元注解有四种：</p>
+<h6 id="Document：是否保存到javadoc中"><a href="#Document：是否保存到javadoc中" class="headerlink" title="@Document：是否保存到javadoc中"></a>@Document：是否保存到javadoc中</h6><p>参考：<a href="https://www.cnblogs.com/uoar/p/8036642.html" target="_blank" rel="external">https://www.cnblogs.com/uoar/p/8036642.html</a></p>
+<h6 id="Retention：保留时间"><a href="#Retention：保留时间" class="headerlink" title="@Retention：保留时间"></a>@Retention：保留时间</h6><p>也就是注解的存活时间（即注解能够起到作用的时间），有三种：<code>SOURCE</code>、<code>CLASS</code>、<code>RUNTIME</code>；从字面上也就可以看出这三种取值的作用。</p>
+<ol>
+<li><code>SOURCE</code>：只存在于源码中，当代码编译成class文件后，注解就已经不存在了。如：<code>@Override</code>这种，只是给编译器看的， 等到编译成了class文件就不存在了；</li>
+<li><code>CLASS</code>：注解可以保留到代码被编译成class文件的阶段，但是当class文件编译为classes.dex文件时也就不存在了，类似于<code>@Color</code>这种注解。<br><br>其实对普通的Android开发者来说，<code>SOURCE</code>和<code>CLASS</code>没有太大的区别，至少我在使用过程中，这两种切换没有出现过问题，想要了解更多的可以Google一下，这里也有可以作为参考的连接：<a href="https://blog.csdn.net/u011315960/article/details/64918467" target="_blank" rel="external">https://blog.csdn.net/u011315960/article/details/64918467</a></li>
+<li><code>RUNTIME</code>：设置了这个取值的注解，表示该注解会一直存在于代码运行阶段，就是说，在代码运行的时候还是可以获取到这个注解和注解的信息。但由于是在运行时获取，就可能要采取反射这一手段了。<h6 id="Target：指定修饰元素类型"><a href="#Target：指定修饰元素类型" class="headerlink" title="@Target：指定修饰元素类型"></a>@Target：指定修饰元素类型</h6>注解可以修饰的对象类型有：TYPE、METHOD、CONSTRUCTOR、FIELD、PARAMETER、LOCAL_VARIABLE、PACKAGE几种。从名称可以看出来，分别代表着：类、方法、构造方法、属性字段、参数、局部变量和包<h6 id="Inherited：是否可以继承（默认为false）"><a href="#Inherited：是否可以继承（默认为false）" class="headerlink" title="@Inherited：是否可以继承（默认为false）"></a>@Inherited：是否可以继承（默认为false）</h6>注解和类一样，也是可以继承的，添加了这个元注解并制定为true，则表示，当添加了此元注解的注解作用在一个对象上时，继承了这个对象的子对象也会默认加上这个注解。<br><br>下面从简单的<code>@Override</code>注解来看看；<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Target</span>(ElementType.METHOD)</div><div class="line"><span class="meta">@Retention</span>(RetentionPolicy.SOURCE)</div><div class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Override &#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>上面是一个注解的定义，可以看出，注解的定义和接口很类似，注解使用<code>@interface</code>关键字定义。添加到<code>Override</code>上的两个注解<code>@Target</code>和<code>@Retention</code>指定了注解的作用对象和存活时间。<code>Override</code>就是这个注解的名称。在这个注解中没有包含任何参数，表示这个注解是一个标记注解。注解也是可以有参数的，如：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Retention</span>(CLASS) <span class="meta">@Target</span>(FIELD)</div><div class="line"><span class="keyword">public</span> <span class="meta">@interface</span> BindView &#123;</div><div class="line">  <span class="comment">/** View ID to which the field will be bound. */</span></div><div class="line">  <span class="meta">@IdRes</span> <span class="function"><span class="keyword">int</span> <span class="title">value</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个名为BindView的注解就有一个参数value，注解的参数和类不同。每一个参数都定义成了一个方法，该方法：</p>
+<ol>
+<li>参数名为方法名</li>
+<li>返回值为参数类型</li>
+<li>没有方法体、没有参数、没有修饰符（只能是public&lt;默认&gt;和abstract）、不允许抛出异常</li>
+<li>返回值只能是基本类型、String、Class、annotation、enum和它们的一维数组</li>
+<li>使用default设置默认值</li>
+</ol>
+<p><strong>注意</strong>: 使用注解时，注解的参数必须要赋值（如果没有默认值的话）。</p>
+<h3 id="注解的解析"><a href="#注解的解析" class="headerlink" title="注解的解析"></a>注解的解析</h3><p>前面说过，注解只是一种标记，通过一系列元注解指定注解的作用和生存周期。但是它本身并没有指定代码的能力。添加了注解只是说明了这些添加了注解的对象应该要起到什么作用或者应该怎样起作用，其本身并没有实质的功能。注解不能主动的进行操作，想要注解实现相应的功能必须要求开发者自己来定义。<br><br>注解的解析分为两种：<strong>运行时解析</strong>和<strong>编译时解析</strong>。作为注解来说，在运行时使用反射来进行代码的逻辑处理始终会有性能影响，只不过，少量的反射处理能够让程序更加灵活，而且性能影响也不会很大。现在众所周知的很多注解框架都会用到编译时注解，因为这种注解的处理方式，完全不使用反射，只在编译阶段生成辅助代码，然后在运行时直接使用生成的辅助代码进行逻辑处理。<br><br>运行时注解是在代码执行过程中，手动调用API进行注解信息的获取和处理，如：<br><br>获取方法上的指定注解：<code>method.getAnnotation(AnnotationName.class)</code><br><br>获取方法所有注解：<code>method.getAnnotations()</code><br><br>是否添加了某个注解：<code>method.isAnnotationPresent(AnnotationName.class)</code><br><br>而编译时注解是由编译器自动处理，我们只需写出处理逻辑。</p>
+<ol>
+<li>自定义注解处理器，继承自<code>AbstractProcesor</code>（编译器在编译时自动查找所有继承自<code>AbstractProcessor</code>的类，然后调用各自的<code>process</code>方法进行处理）</li>
+<li>重写<code>process</code>函数，编写自己的处理逻辑。</li>
+<li><code>process</code>的返回值表示改组注解是否被Processor接受，如果接受，则后续processor不再进行处理。</li>
+<li>将自己的注解处理器注册到javac中，有两种方式：一是手动在resources资源文件夹下新建<code>META-INF/services/javax.annotation.processing.Processor</code>文件，这个文件中是一系列自定义注解处理器的完整有效类名集合（包名+类名），每个处理器单独一行；二是使用三方库添加<code>@AutoService</code>注解，即可自动生成所需文件，需要添加依赖<code>com.google.auto.service:auto-service:1.0-rc3</code><h3 id="自定义注解处理器"><a href="#自定义注解处理器" class="headerlink" title="自定义注解处理器"></a>自定义注解处理器</h3>以下两种方法都可添加需要自定义解析的注解：<br><br>1&gt; 使用<code>@SupportedAnnotationTypes (&quot;&quot;)</code>：表示支持的注解类型的完整路径（packageName + className)；使用<code>@SupportedSourceVersion(SourceVersion.RELEASE_8)</code>: 表示处理器支持的源码版本。<br><br>2&gt; 实现内部方法：<br><br>//返回支持的注解类型完整路径集合<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> Set&lt;String&gt; <span class="title">getSupportedAnnotationTypes</span><span class="params">()</span> </span>&#123;</div><div class="line">    Set&lt;String&gt; annotations = <span class="keyword">new</span> LinkedHashSet&lt;&gt;();</div><div class="line">    annotations.add(BindView.class.getCanonicalName());</div><div class="line">    annotations.add(ParcelableFormat.class.getCanonicalName());</div><div class="line">    <span class="keyword">return</span> annotations;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//返回处理器支持的源码版本</span></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> SourceVersion <span class="title">getSupportedSourceVersion</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="comment">//一般返回最新版本，也可指定版本</span></div><div class="line">    <span class="keyword">return</span> SourceVersion.latestSupported();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>获取自定义处理所需的工具对象：<br><br>根据初始化传入的参数获取注解处理器获取信息所需的对象：Filer、Messager、Elements<br><br>getElementUtils()：返回一些用于操作元素的实用方法的实现<br><br>getFiler()：返回用于创建新的源，类或辅助文件的文件管理器<br><br>getMessager()：返回用于报告错误，警告和其他通知的信使<br><br>getTypeUtils()：返回一些用于对类型进行操作的实用方法的实现<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(ProcessingEnvironment processingEnvironment)</span> </span>&#123;</div><div class="line">    <span class="keyword">super</span>.init(processingEnvironment);</div><div class="line">    mFilter = processingEnvironment.getFiler();</div><div class="line">    mMessager = processingEnvironment.getMessager();</div><div class="line">    mElementUtils = processingEnvironment.getElementUtils();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>对自定义注解进行处理：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">process</span><span class="params">(Set&lt;? extends TypeElement&gt; set, RoundEnvironment roundEnvironment)</span> </span>&#123;</div><div class="line">	<span class="keyword">for</span> (Element element : roundEnvironment.getElementsAnnotatedWith(BindView.class)) &#123;</div><div class="line">	    <span class="comment">//进行解析操作</span></div><div class="line">	    ...</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">for</span> (Element element : roundEnvironment.getElementsAnnotatedWith(Onclick.class)) &#123;</div><div class="line">	    <span class="comment">//进行解析操作</span></div><div class="line">	    ...</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>获取到添加了自定义注解的Element对象后，就可以从元素中获取所有自己需要的信息然后进行辅助代码的生成。关于Element对象的操作，Java提供了大量对象和方法，位于<code>javax.lang.mode</code>包及其子包下。具体信息的获取可以参考文档。</p>
+<p>而辅助代码的生成则是一门艺术了，根据从Element对象中获取的详细信息，想要生成自己需要的辅助代码，依靠Java自带的API是比较麻烦的。JavaPoet工具给广大Java开发者提供了一个Java文件生成的方式，提供了很多方法和详细的API文档，可以参考文档进行学习；还有一种辅助代码生成工具就是使用模板语言了，freemarker是一款很不错的工具；这两种代码生成工具可以看需要和兴趣进行学习。</p>
+<p>以上就是自定义注解所需的基本步骤，如果只是简单的获取到添加的注解信息，那么到此也就可以了，注解信息的获取是比较简单的。</p>
+<h3 id="帮助"><a href="#帮助" class="headerlink" title="帮助"></a>帮助</h3><p>在写自定义注解和注解处理器时，对于代码的调试和日志信息查看和平时不同，因为注解处理器是在编译时运行的，在正常环境下无法进行调试，因此需要进行一系列配置，可参考：<a href="https://blog.csdn.net/tomatomas/article/details/53998585" target="_blank" rel="external">https://blog.csdn.net/tomatomas/article/details/53998585</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/注解/" rel="tag"># 注解</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/26/2018.03.06_01/" rel="next" title="拍照获取原图和缩略图">
+                <i class="fa fa-chevron-left"></i> 拍照获取原图和缩略图
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/mydog.jpg"
+               alt="SRaibnow" />
+          <p class="site-author-name" itemprop="name">SRaibnow</p>
+           
+              <p class="site-description motion-element" itemprop="description">better study, better better life...</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注解的主要作用"><span class="nav-number">2.</span> <span class="nav-text">注解的主要作用</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Document：是否保存到javadoc中"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">@Document：是否保存到javadoc中</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Retention：保留时间"><span class="nav-number">2.0.0.2.</span> <span class="nav-text">@Retention：保留时间</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Target：指定修饰元素类型"><span class="nav-number">2.0.0.3.</span> <span class="nav-text">@Target：指定修饰元素类型</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Inherited：是否可以继承（默认为false）"><span class="nav-number">2.0.0.4.</span> <span class="nav-text">@Inherited：是否可以继承（默认为false）</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注解的解析"><span class="nav-number">3.</span> <span class="nav-text">注解的解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义注解处理器"><span class="nav-number">4.</span> <span class="nav-text">自定义注解处理器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#帮助"><span class="nav-number">5.</span> <span class="nav-text">帮助</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">SRaibnow</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
