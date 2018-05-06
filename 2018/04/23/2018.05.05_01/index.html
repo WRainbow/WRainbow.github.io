@@ -93,18 +93,18 @@
 
 
 
-<meta name="description" content="使用AndroidStudio自带的gradle工具实现APK的多渠道打包最开始，当项目完成准备发布时，就直接打一个包发到各个应用市场中；但是随着用户量的增加，为了更好的分析用户使用情况，需要区分不同平台的下载用户。这就需要一种方法来唯一标识它们。 大部分情况下我们都会选择使用不同的渠道号（channel）来区分不同的平台用户。每次发布版本时，发往不同市场的APK都会加上特定的渠道号，这样在进行数">
+<meta name="description" content="最开始，当项目完成准备发布时，就直接打一个包发到各个应用市场中；但是随着用户量的增加，为了更好的分析用户使用情况，需要区分不同平台的下载用户。这就需要一种方法来唯一标识它们。 大部分情况下我们都会选择使用不同的渠道号（channel）来区分不同的平台用户。每次发布版本时，发往不同市场的APK都会加上特定的渠道号，这样在进行数据分析或者bug分析时就能够更有针对性。但是不能每次发布一个平台就重新手动">
 <meta name="keywords" content="AndroidStudio,多渠道打包">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Java注解及其自定义">
+<meta property="og:title" content="使用AndroidStudio自带的gradle工具实现APK的多渠道打包">
 <meta property="og:url" content="http://singlerainbow.com/2018/04/23/2018.05.05_01/index.html">
 <meta property="og:site_name" content="SRainbow的博客">
-<meta property="og:description" content="使用AndroidStudio自带的gradle工具实现APK的多渠道打包最开始，当项目完成准备发布时，就直接打一个包发到各个应用市场中；但是随着用户量的增加，为了更好的分析用户使用情况，需要区分不同平台的下载用户。这就需要一种方法来唯一标识它们。 大部分情况下我们都会选择使用不同的渠道号（channel）来区分不同的平台用户。每次发布版本时，发往不同市场的APK都会加上特定的渠道号，这样在进行数">
+<meta property="og:description" content="最开始，当项目完成准备发布时，就直接打一个包发到各个应用市场中；但是随着用户量的增加，为了更好的分析用户使用情况，需要区分不同平台的下载用户。这就需要一种方法来唯一标识它们。 大部分情况下我们都会选择使用不同的渠道号（channel）来区分不同的平台用户。每次发布版本时，发往不同市场的APK都会加上特定的渠道号，这样在进行数据分析或者bug分析时就能够更有针对性。但是不能每次发布一个平台就重新手动">
 <meta property="og:image" content="https://github.com/WRainbow/Bed-Of-ScreenShot/blob/master/ScreenShot/Flavor%E6%B7%BB%E5%8A%A0.png">
-<meta property="og:updated_time" content="2018-05-06T04:48:50.124Z">
+<meta property="og:updated_time" content="2018-05-06T04:56:18.654Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java注解及其自定义">
-<meta name="twitter:description" content="使用AndroidStudio自带的gradle工具实现APK的多渠道打包最开始，当项目完成准备发布时，就直接打一个包发到各个应用市场中；但是随着用户量的增加，为了更好的分析用户使用情况，需要区分不同平台的下载用户。这就需要一种方法来唯一标识它们。 大部分情况下我们都会选择使用不同的渠道号（channel）来区分不同的平台用户。每次发布版本时，发往不同市场的APK都会加上特定的渠道号，这样在进行数">
+<meta name="twitter:title" content="使用AndroidStudio自带的gradle工具实现APK的多渠道打包">
+<meta name="twitter:description" content="最开始，当项目完成准备发布时，就直接打一个包发到各个应用市场中；但是随着用户量的增加，为了更好的分析用户使用情况，需要区分不同平台的下载用户。这就需要一种方法来唯一标识它们。 大部分情况下我们都会选择使用不同的渠道号（channel）来区分不同的平台用户。每次发布版本时，发往不同市场的APK都会加上特定的渠道号，这样在进行数据分析或者bug分析时就能够更有针对性。但是不能每次发布一个平台就重新手动">
 <meta name="twitter:image" content="https://github.com/WRainbow/Bed-Of-ScreenShot/blob/master/ScreenShot/Flavor%E6%B7%BB%E5%8A%A0.png">
 
 
@@ -139,7 +139,7 @@
 
 
 
-  <title>Java注解及其自定义 | SRainbow的博客</title>
+  <title>使用AndroidStudio自带的gradle工具实现APK的多渠道打包 | SRainbow的博客</title>
   
 
 
@@ -295,7 +295,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Java注解及其自定义</h1>
+          <h1 class="post-title" itemprop="name headline">使用AndroidStudio自带的gradle工具实现APK的多渠道打包</h1>
         
 
         <div class="post-meta">
@@ -342,7 +342,7 @@
       
 
       
-        <h1 id="使用AndroidStudio自带的gradle工具实现APK的多渠道打包"><a href="#使用AndroidStudio自带的gradle工具实现APK的多渠道打包" class="headerlink" title="使用AndroidStudio自带的gradle工具实现APK的多渠道打包"></a>使用AndroidStudio自带的gradle工具实现APK的多渠道打包</h1><p>最开始，当项目完成准备发布时，就直接打一个包发到各个应用市场中；但是随着用户量的增加，为了更好的分析用户使用情况，需要区分不同平台的下载用户。这就需要一种方法来唯一标识它们。</p>
+        <p>最开始，当项目完成准备发布时，就直接打一个包发到各个应用市场中；但是随着用户量的增加，为了更好的分析用户使用情况，需要区分不同平台的下载用户。这就需要一种方法来唯一标识它们。</p>
 <p>大部分情况下我们都会选择使用不同的渠道号（<code>channel</code>）来区分不同的平台用户。每次发布版本时，发往不同市场的APK都会加上特定的渠道号，这样在进行数据分析或者bug分析时就能够更有针对性。但是不能每次发布一个平台就重新手动改下渠道号然后重新打包；也不能把所有的渠道号都打进去，然后在运行时根据当前平台再区分。因此就需要特定的工具来实现打包时自动不同渠道号的APK，gradle工具就可以实现。<a id="more"></a></p>
 <h3 id="简单实现"><a href="#简单实现" class="headerlink" title="简单实现"></a>简单实现</h3><p>一、 在AndroidManifest文件中添加占位符</p>
 <p>因为在打包APK时，AndroidManifest中的数据会被编译进APK，应用程序也会根据此文件中获取自己需要的数据，因此，可以直接在AndroidManifest文件中设置占位符，然后在打包时按照不同的渠道号自动填入编译。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;meta-data</div><div class="line">    android:name=<span class="string">"UMENG_CHANNEL"</span></div><div class="line">    android:value=<span class="string">"$&#123;UMENG_CHANNEL&#125;"</span> /&gt;</div></pre></td></tr></table></figure></p>
@@ -539,7 +539,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#使用AndroidStudio自带的gradle工具实现APK的多渠道打包"><span class="nav-number">1.</span> <span class="nav-text">使用AndroidStudio自带的gradle工具实现APK的多渠道打包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简单实现"><span class="nav-number">1.0.1.</span> <span class="nav-text">简单实现</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#获取application标签下的-lt-meta-data-gt-数据："><span class="nav-number">1.0.1.0.0.1.</span> <span class="nav-text">获取application标签下的<meta-data>数据：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#获取activity标签下的-lt-meta-data-gt-数据："><span class="nav-number">1.0.1.0.0.2.</span> <span class="nav-text">获取activity标签下的<meta-data>数据：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#获取service标签下的-lt-meta-data-gt-数据："><span class="nav-number">1.0.1.0.0.3.</span> <span class="nav-text">获取service标签下的<meta-data>数据：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#获取receiver标签下的-lt-meta-data-gt-数据："><span class="nav-number">1.0.1.0.0.4.</span> <span class="nav-text">获取receiver标签下的<meta-data>数据：</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注："><span class="nav-number">1.0.2.</span> <span class="nav-text">注：</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#简单实现"><span class="nav-number">1.</span> <span class="nav-text">简单实现</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#获取application标签下的-lt-meta-data-gt-数据："><span class="nav-number">1.0.0.1.</span> <span class="nav-text">获取application标签下的<meta-data>数据：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#获取activity标签下的-lt-meta-data-gt-数据："><span class="nav-number">1.0.0.2.</span> <span class="nav-text">获取activity标签下的<meta-data>数据：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#获取service标签下的-lt-meta-data-gt-数据："><span class="nav-number">1.0.0.3.</span> <span class="nav-text">获取service标签下的<meta-data>数据：</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#获取receiver标签下的-lt-meta-data-gt-数据："><span class="nav-number">1.0.0.4.</span> <span class="nav-text">获取receiver标签下的<meta-data>数据：</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#注："><span class="nav-number">2.</span> <span class="nav-text">注：</span></a></li></ol></div>
             
 
           </div>
