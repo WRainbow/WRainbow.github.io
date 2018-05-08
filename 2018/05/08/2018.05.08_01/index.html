@@ -1,0 +1,733 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android,Handler," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="说明关于Android中的Handler处理机制，之前在这里结合源码有了个基础介绍。需要回顾了解Handler、Message、Loop的异步处理机制，可以再看下。 最近在写轮播图Demo测试时发现了Handler的一个坑，之后需要注意避免。 情景再现在写轮播图的实现时，想着使用Handler的消息机制来进行图片的切换">
+<meta name="keywords" content="Android,Handler">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Handler在`removeMessages()`和`sendMessage()`的调用时机">
+<meta property="og:url" content="http://singlerainbow.com/2018/05/08/2018.05.08_01/index.html">
+<meta property="og:site_name" content="SRainbow的博客">
+<meta property="og:description" content="说明关于Android中的Handler处理机制，之前在这里结合源码有了个基础介绍。需要回顾了解Handler、Message、Loop的异步处理机制，可以再看下。 最近在写轮播图Demo测试时发现了Handler的一个坑，之后需要注意避免。 情景再现在写轮播图的实现时，想着使用Handler的消息机制来进行图片的切换">
+<meta property="og:updated_time" content="2018-05-08T12:25:55.069Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Handler在`removeMessages()`和`sendMessage()`的调用时机">
+<meta name="twitter:description" content="说明关于Android中的Handler处理机制，之前在这里结合源码有了个基础介绍。需要回顾了解Handler、Message、Loop的异步处理机制，可以再看下。 最近在写轮播图Demo测试时发现了Handler的一个坑，之后需要注意避免。 情景再现在写轮播图的实现时，想着使用Handler的消息机制来进行图片的切换">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"hide","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://singlerainbow.com/2018/05/08/2018.05.08_01/"/>
+
+
+
+
+
+  <title>Handler在`removeMessages()`和`sendMessage()`的调用时机 | SRainbow的博客</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?53f3acf593d1df40cb299aa41b4a0fa1";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">SRainbow的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">记录下学习过程</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://singlerainbow.com/2018/05/08/2018.05.08_01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="SRaibnow">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/mydog.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="SRainbow的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Handler在`removeMessages()`和`sendMessage()`的调用时机</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-08T00:00:00+08:00">
+                2018-05-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>关于Android中的Handler处理机制，之前在<a href="http://singlerainbow.com/2017/09/18/2017.09.18_01">这里</a>结合源码有了个基础介绍。需要回顾了解Handler、Message、Loop的异步处理机制，可以再看下。</p>
+<p>最近在写轮播图Demo测试时发现了Handler的一个坑，之后需要注意避免。</p>
+<h3 id="情景再现"><a href="#情景再现" class="headerlink" title="情景再现"></a>情景再现</h3><p>在写轮播图的实现时，想着使用Handler的消息机制来进行图片的切换<a id="more"></a>，大致代码(<strong>不可取</strong>)如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> Handler mBannerHandler = <span class="keyword">new</span> Handler(<span class="keyword">new</span> Handler.Callback() &#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</div><div class="line">        <span class="keyword">switch</span> (msg.what) &#123;</div><div class="line">            <span class="keyword">case</span> <span class="number">0</span>: <span class="comment">//开始轮播图</span></div><div class="line">                mBannerHandler.sendEmptyMessageDelayed(<span class="number">1</span>, time);</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> <span class="number">1</span>: <span class="comment">//轮播图循环</span></div><div class="line">                <span class="keyword">if</span> (isAuto) &#123;</div><div class="line">                    mBanner.setCurrentItem(currentPage + <span class="number">1</span>);</div><div class="line">                &#125;</div><div class="line">                mBannerHandler.sendEmptyMessageDelayed(<span class="number">1</span>, time);</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> <span class="number">2</span>: <span class="comment">//停止轮播图</span></div><div class="line">                mBannerHandler.removeMessages(<span class="number">0</span>);</div><div class="line">                mBannerHandler.removeMessages(<span class="number">1</span>);</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>然后开始和停止代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//开始</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="comment">//先停止轮播图，防止多次连续开始轮播图导致连续切换页面</span></div><div class="line">    end();</div><div class="line">    mBannerHandler.sendEmptyMessage(<span class="number">0</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//停止</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">end</span><span class="params">()</span> </span>&#123;</div><div class="line">    mBannerHandler.sendEmptyMessage(<span class="number">2</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这样会有什么问题呢，那就是 - 调用<code>start()</code>方法后轮播图不轮播了，你说可不可怕~</p>
+<h3 id="幕后黑手"><a href="#幕后黑手" class="headerlink" title="幕后黑手"></a>幕后黑手</h3><p>之前写了很多的Handler代码，貌似也没有出现过这种发出消息没法接收的情况，这次却恰好出现了，幕后推手就是：我以为的代码规范。。。</p>
+<p>本着逻辑统一的原则，在写代码时我把轮播图的控制逻辑都放在了消息处理中，让Handler根据不同的消息类型进行不同的处理，其中当然包括开始轮播图、轮播图轮播、停止轮播图。一种消息代表一种处理，很好，很天真。。。</p>
+<p>我认为：究其原因，是因为Handler的异步。在<code>start()</code>方法中，虽然我顺序发送了两条消息，第一个是停止轮播图的消息，第二个是开始轮播图的消息。这么之后我却<strong>想当然的</strong>认为会在执行了停止轮播图后再次开始轮播图，然而事实是<strong>Handler会几乎同时收到了这两个消息，同时这两条消息也会加在该Handler的消息队列上。之后当然会因为在收到消息为2时清除了队列上所有0和1的消息而导致启动轮播图的消息也被清理了，轮播图也就自然而然的无法轮播了</strong>。</p>
+<h3 id="处理方法"><a href="#处理方法" class="headerlink" title="处理方法"></a>处理方法</h3><p>知道原因之后，那么就很好解决了，只要让<code>removeMessages()</code>方法和<code>sendMessage()</code>方法在一起被调用即可，即：要不全在Handler外调用，要不全在Handler内调用。</p>
+<h4 id="在Handler外调用"><a href="#在Handler外调用" class="headerlink" title="在Handler外调用"></a>在Handler外调用</h4><p>这种方式下就不需要<code>what = 2</code>的消息了，因为移除消息都在外部直接调用了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> Handler mBannerHandler = <span class="keyword">new</span> Handler(<span class="keyword">new</span> Handler.Callback() &#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</div><div class="line">        <span class="keyword">switch</span> (msg.what) &#123;</div><div class="line">            <span class="keyword">case</span> <span class="number">0</span>: <span class="comment">//开始轮播图</span></div><div class="line">                mBannerHandler.sendEmptyMessageDelayed(<span class="number">1</span>, time);</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> <span class="number">1</span>: <span class="comment">//轮播图循环</span></div><div class="line">                <span class="comment">//显示下一张</span></div><div class="line">                <span class="keyword">if</span> (isAuto) &#123;</div><div class="line">                    mBanner.setCurrentItem(currentPage + <span class="number">1</span>);</div><div class="line">                &#125;</div><div class="line">                mBannerHandler.sendEmptyMessageDelayed(<span class="number">1</span>, time);</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>然后开始和停止代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//开始</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="comment">//先停止轮播图，防止多次连续开始轮播图导致连续切换页面</span></div><div class="line">    end();</div><div class="line">    mBannerHandler.sendEmptyMessage(<span class="number">0</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//停止</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">end</span><span class="params">()</span> </span>&#123;</div><div class="line">    mBannerHandler.removeMessages(<span class="number">0</span>);</div><div class="line">    mBannerHandler.removeMessages(<span class="number">1</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>之后直接调用<code>start()</code>方法即可开启轮播图。</p>
+<h4 id="在Handler外调用-1"><a href="#在Handler外调用-1" class="headerlink" title="在Handler外调用"></a>在Handler外调用</h4><p>这种方式就需要发送同一类型不同值的消息来进行处理</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> Handler mBannerHandler = <span class="keyword">new</span> Handler(<span class="keyword">new</span> Handler.Callback() &#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</div><div class="line">        <span class="keyword">switch</span> (msg.what) &#123;</div><div class="line">            <span class="keyword">case</span> <span class="number">1</span>: <span class="comment">//轮播图循环</span></div><div class="line">                <span class="comment">//显示下一张</span></div><div class="line">                <span class="keyword">if</span> (isAuto) &#123;</div><div class="line">                    mBanner.setCurrentItem(currentPage + <span class="number">1</span>);</div><div class="line">                &#125;</div><div class="line">                mBannerHandler.sendEmptyMessageDelayed(<span class="number">1</span>, time);</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> <span class="number">2</span>: <span class="comment">//控制轮播图开始、停止</span></div><div class="line">                mBannerHandler.removeMessages(<span class="number">0</span>);</div><div class="line">                mBannerHandler.removeMessages(<span class="number">1</span>);</div><div class="line">                <span class="keyword">if</span> (msg.arg1 == <span class="number">100</span>) &#123;</div><div class="line">	                mBannerHandler.sendEmptyMessageDelayed(<span class="number">1</span>, time);</div><div class="line">	            &#125;</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>然后开始和停止代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//开始</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="comment">//先停止轮播图，防止多次连续开始轮播图导致连续切换页面</span></div><div class="line">    end();</div><div class="line">    Message msg = mBannerHandler.obtainMesaage();</div><div class="line">    msg.what = <span class="number">2</span>;</div><div class="line">    msg.arg1 = <span class="number">100</span>;</div><div class="line">    mBannerHandler.sendMessage(msg);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//停止</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">end</span><span class="params">()</span> </span>&#123;</div><div class="line">    mBannerHandler.sendEmptyMessage(<span class="number">2</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="这样也可以"><a href="#这样也可以" class="headerlink" title="这样也可以"></a>这样也可以</h4><p>如果你就是要坚持最初的选择，保证所有的逻辑处理都放在Handler中，外部只是根据状态发送一个消息，这样也可以。</p>
+<p>你只需要保证发送2和0的消息间隔一段时间就行，即消息0延迟发送（哪怕就延迟10ms），保证在Handler中清除消息时不会把后来的0消息也清除掉，但注意，这个延迟不是说使用这种：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mBannerHandler.sendEmptyMessageDelayed(<span class="number">0</span>, <span class="number">10</span>);</div></pre></td></tr></table></figure>
+<p>这种方式也会立即把消息加到mBannerHandler的消息队列中。<br>你只需要把开篇<strong>情景再现</strong>中的<code>start()</code>方法稍作改动即可，为了不用再往上翻，这里直接放上全部代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> Handler mBannerHandler = <span class="keyword">new</span> Handler(<span class="keyword">new</span> Handler.Callback() &#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</div><div class="line">        <span class="keyword">switch</span> (msg.what) &#123;</div><div class="line">            <span class="keyword">case</span> <span class="number">0</span>: <span class="comment">//开始轮播图</span></div><div class="line">                mBannerHandler.sendEmptyMessageDelayed(<span class="number">1</span>, time);</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> <span class="number">1</span>: <span class="comment">//轮播图循环</span></div><div class="line">                <span class="keyword">if</span> (isAuto) &#123;</div><div class="line">                    mBanner.setCurrentItem(currentPage + <span class="number">1</span>);</div><div class="line">                &#125;</div><div class="line">                mBannerHandler.sendEmptyMessageDelayed(<span class="number">1</span>, time);</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="keyword">case</span> <span class="number">2</span>: <span class="comment">//停止轮播图</span></div><div class="line">                mBannerHandler.removeMessages(<span class="number">0</span>);</div><div class="line">                mBannerHandler.removeMessages(<span class="number">1</span>);</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">        &#125;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>然后开始和停止代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//开始</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="comment">//先停止轮播图，防止多次连续开始轮播图导致连续切换页面</span></div><div class="line">    end();</div><div class="line">    <span class="comment">//这里必须要用new Handler()，如果直接使用mBannerHandler.postDelayed()仍然没用，原因和之前一样，即：会立即把这条消息加到mBannerHandler的消息队列上，会被消息2移除</span></div><div class="line">    <span class="keyword">new</span> Handler().postDelayed(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">            mBannerHandler.sendEmptyMessage(<span class="number">0</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;, <span class="number">10</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//停止</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">end</span><span class="params">()</span> </span>&#123;</div><div class="line">    mBannerHandler.sendEmptyMessage(<span class="number">2</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h3><p>方法有很多种，比较耗时间的是发现问题，当“拨开云雾”发现问题之后，其实解决方法就很容易想到了。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android/" rel="tag"># Android</a>
+          
+            <a href="/tags/Handler/" rel="tag"># Handler</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/06/2018.05.05_01/" rel="next" title="使用AndroidStudio自带的gradle工具实现APK的多渠道打包">
+                <i class="fa fa-chevron-left"></i> 使用AndroidStudio自带的gradle工具实现APK的多渠道打包
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/mydog.jpg"
+               alt="SRaibnow" />
+          <p class="site-author-name" itemprop="name">SRaibnow</p>
+           
+              <p class="site-description motion-element" itemprop="description">better study, better better life...</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">18</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#情景再现"><span class="nav-number">2.</span> <span class="nav-text">情景再现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#幕后黑手"><span class="nav-number">3.</span> <span class="nav-text">幕后黑手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#处理方法"><span class="nav-number">4.</span> <span class="nav-text">处理方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#在Handler外调用"><span class="nav-number">4.1.</span> <span class="nav-text">在Handler外调用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#在Handler外调用-1"><span class="nav-number">4.2.</span> <span class="nav-text">在Handler外调用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#这样也可以"><span class="nav-number">4.3.</span> <span class="nav-text">这样也可以</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后记"><span class="nav-number">5.</span> <span class="nav-text">后记</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">SRaibnow</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
